@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+
+<body>
+	<canvas width="700" height="320" style="margin-top: 30px; display: block; margin: auto;" id="mycanv">
+		
+	</canvas>
+
+	<script type="text/javascript">
+		
+		var canvas = document.getElementById("mycanv");
+		var ctx = canvas.getContext("2d");
+		
+		var dragonImages = [];
+		var dragonImagesURL = ["https://i.imgur.com/dyPMw7K.png",  "https://i.imgur.com/cO9ZZMC.png", "https://i.imgur.com/AJUkc9s.png", "https://i.imgur.com/6xIWhPr.png"];
+
+
+		for (var i=0; i<dragonImagesURL.length; i++){
+			var dragonImage = new Image();
+			dragonImage.src = dragonImagesURL[i]
+			dragonImages.push(dragonImage);
+		}
+
+		var counter = 0;
+		function update(){
+			counter++;
+			ctx.fillStyle = "#000000";
+			ctx.fillRect(0, 0, 700, 320);
+			
+			var maxIndexImage = dragonImages.length-1;
+			ctx.drawImage(dragonImages[counter%maxIndexImage], 700/2 + counter, 320/2, 100, 100);
+
+		}
+		
+		setInterval(update, 50)
+
+	</script>
+</body>
+
+</html>
