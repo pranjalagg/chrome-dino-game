@@ -13,9 +13,21 @@
 		
 		var canvas = document.getElementById("mycanv");
 		var ctx = canvas.getContext("2d");
-		
+		var width = 700;
+		var height = 320;
+
+		function drawObject(object){
+			var currentImageIndex = counter%object.images.length;
+			var currentImage = object.images[currentImageIndex];
+			ctx.drawImage(currentImage, object.x - (object.width/2), object.y - (object.height/2), object.width, object.height);
+		}
+
 		var dragonImages = [];
-		var dragonImagesURL = ["https://i.imgur.com/dyPMw7K.png",  "https://i.imgur.com/cO9ZZMC.png", "https://i.imgur.com/AJUkc9s.png", "https://i.imgur.com/6xIWhPr.png"];
+		var dragonImagesURL = [	"https://i.imgur.com/dyPMw7K.png",
+								"https://i.imgur.com/WwUcIUd.png",
+								"https://i.imgur.com/cO9ZZMC.png",
+								"https://i.imgur.com/AJUkc9s.png",
+								"https://i.imgur.com/6xIWhPr.png" ];
 
 
 		for (var i=0; i<dragonImagesURL.length; i++){
@@ -24,14 +36,64 @@
 			dragonImages.push(dragonImage);
 		}
 
+		var dragon = {};
+		dragon.images = dragonImages;
+		dragon.width = 50;
+		dragon.height = 50;
+		dragon.x = 100;
+		dragon.y = 280;
+		dragon.speedY = 0;
+		dragon.speedX = 0;
+
+		var clouds = [];
+		var cloudImage = new Image();
+		cloudImage.src = "https://i.imgur.com/H84RIEb.png";
+
+		function getCloud(){
+			var cloud = {};
+			cloud.images = [cloudImage];
+			cloud.width = 50;
+			cloud.height = 50;
+			cloud.x = width;
+			cloud.y = 30 + Math.random()*75;
+			cloud.isActive = true;
+			cloud.speedX = -4 - (Math.random()*4);
+			cloud.speedY = 0;
+
+			cloud.move = function(){
+				this.x = this.x + this.speedX;
+				if (this.x < -100){
+					this.isActive = false;
+				}
+			}
+			return cloud;
+		}
+
 		var counter = 0;
 		function update(){
 			counter++;
 			ctx.fillStyle = "#000000";
 			ctx.fillRect(0, 0, 700, 320);
 			
-			var maxIndexImage = dragonImages.length-1;
-			ctx.drawImage(dragonImages[counter%maxIndexImage], 700/2 + counter, 320/2, 100, 100);
+			drawObject(dragon);
+
+			if (counter%40 == 0){
+				var cloud = getCloud();
+				clouds.push(cloud);
+			}
+
+			var cloudsFinal = [];
+			for (var i=0; i<clouds.length; i++){
+				var cloud = clouds[i];
+				cloud.move();
+				drawObject(cloud);
+
+				if (cloud.isActive == true){
+					cloudsFinal.push(cloud);
+				}
+			}
+
+			clouds = cloudsFinal;
 
 		}
 		
