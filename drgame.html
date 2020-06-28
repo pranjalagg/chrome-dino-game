@@ -2,10 +2,13 @@
 <html>
 <head>
 	<title></title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+	</style>
 </head>
 
 <body>
-	<canvas width="700" height="320" style="margin-top: 30px; display: block; margin: auto;" id="mycanv">
+	<canvas width="1900" height="320" style="margin-top: 30px; display: block; margin: auto;" id="mycanv">
 		
 	</canvas>
 
@@ -13,8 +16,14 @@
 		
 		var canvas = document.getElementById("mycanv");
 		var ctx = canvas.getContext("2d");
-		var width = 700;
+		var width = 1900;
 		var height = 320;
+
+		var audio = new Audio("button-press.mp3")
+
+		function playJumpAudio(){
+			audio.play();
+		}
 
 		function drawObject(object){
 			var currentImageIndex = counter%object.images.length;
@@ -23,6 +32,7 @@
 
 			if (object.repeat === 1){
 				ctx.drawImage(currentImage, object.width + object.x - (object.width/2), object.y - (object.height/2), object.width, object.height);
+				ctx.drawImage(currentImage, object.width*2 + object.x - (object.width/2), object.y - (object.height/2), object.width, object.height);
 			}
 		}
 
@@ -49,7 +59,7 @@
 		dragon.speedY = 0;
 		dragon.speedX = 0;
 
-		var gravity = 2.08;
+		var gravity = 3.5;
 
 		dragon.move = function(){
 			this.speedY = this.speedY + gravity;
@@ -93,11 +103,11 @@
 			var hurdle = {};
 			hurdle.images = [hurdleImage];
 			hurdle.width = 30;
-			hurdle.height = 70;
+			hurdle.height = 50;
 			hurdle.x = width;
-			hurdle.y = height - hurdle.height/2 - 15;
+			hurdle.y = height - hurdle.height/2 - 10;
 			hurdle.isActive = true;
-			hurdle.speedX = -9;
+			hurdle.speedX = -15;
 			hurdle.speedY = 0;
 
 			hurdle.move = function(){
@@ -117,7 +127,7 @@
 		land.images = [landImage];
 		land.x = land.width/2;
 		land.y = height - 13;
-		land.speedX = -4;
+		land.speedX = -15;
 		land.speedY = 0;
 		land.repeat = 1;
 
@@ -133,7 +143,7 @@
 		function update(){
 			counter++;
 			score++;
-			ctx.fillStyle = "#000000";
+			ctx.fillStyle = "#f7f7f7";
 			ctx.fillRect(0, 0, width, height);
 
 			if (counter%40 == 0){
@@ -145,6 +155,10 @@
 				var hurdle = getHurdle();	
 				hurdles.push(hurdle);	
 			}
+
+			ctx.font = "12px 'Press Start 2P'"
+			ctx.fillStyle = "#000000"
+			ctx.fillText("Score: " + parseInt(score/2), width-180, 50)
 
 			dragon.move();
 			drawObject(dragon);
@@ -183,8 +197,9 @@
 			if (event.keyCode == 32 || event.keyCode == 38) {
 				// console.log(event.keyCode);
 				console.log("Jump")
-				if (dragon.y == 280){
-					dragon.speedY = -20;
+				if (dragon.y >= 200){
+					playJumpAudio();
+					dragon.speedY = -25;
 				}
 			}
 
