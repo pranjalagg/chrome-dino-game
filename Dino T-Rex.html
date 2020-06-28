@@ -4,9 +4,11 @@
 	<title>T Rex</title>
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-		h4 {
-			color: #ffffff;
+		.details {
+			color: #faece6;
+			font-family: 'Press Start 2P', cursive;
 		}
+		a { color: #95d2ba; }
 	</style>
 </head>
 
@@ -15,7 +17,7 @@
 		
 	</canvas>
 	<br><br><br><br>
-	<div style="text-align: center;"><h4><a href="https://www.github.com/pranjalagg">Github <br><br></a>Pranjal Aggarwal<a href="https://in.linkedin.com/in/pranjal-aggarwal"><br><br>Linkedin</a></h4></div>
+	<div class="details" style="text-align: center;"><h3><a href="https://www.github.com/pranjalagg">Github<br><br></a>Pranjal Aggarwal<a href="https://in.linkedin.com/in/pranjal-aggarwal"><br><br>Linkedin</a></h3></div>
 
 
 	<script type="text/javascript">
@@ -131,7 +133,7 @@
 				this.x = this.x + this.speedX;
 				if (this.x == dino.x && dino.y >= 220){
 					console.log("Game Over");
-					ctx.font = "50px 'Press Start 2P'";
+					ctx.font = "80px 'Press Start 2P'";
 					ctx.textAlign = "center";
 					ctx.textBaseline = "middle";
 					ctx.fillStyle = "White";
@@ -185,8 +187,9 @@
 					clouds.push(cloud);
 				}
 
-				// num = Math.random()*100;
-				if(counter%100 == 0){	
+				num = Math.floor(Math.random()*21) + 50;
+				console.log(num);
+				if(counter%num == 0){	
 					var obstacle = getobstacle();	
 					obstacles.push(obstacle);	
 				}
