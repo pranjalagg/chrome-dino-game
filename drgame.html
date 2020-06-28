@@ -7,7 +7,7 @@
 	</style>
 </head>
 
-<body>
+<body style="background-color: #121212">
 	<canvas width="1900" height="320" style="margin-top: 30px; display: block; margin: auto;" id="mycanv">
 		
 	</canvas>
@@ -18,6 +18,7 @@
 		var ctx = canvas.getContext("2d");
 		var width = 1900;
 		var height = 320;
+		var gameOver = false;
 
 		var audio = new Audio("button-press.mp3")
 
@@ -36,34 +37,37 @@
 			}
 		}
 
-		var dragonImages = [];
-		var dragonImagesURL = [	"https://i.imgur.com/dyPMw7K.png",
+		var dinoImages = [];
+		var dinoImagesURL = [	"https://i.imgur.com/dyPMw7K.png",
 								"https://i.imgur.com/WwUcIUd.png",
 								"https://i.imgur.com/cO9ZZMC.png",
 								"https://i.imgur.com/AJUkc9s.png",
 								"https://i.imgur.com/6xIWhPr.png" ];
 
 
-		for (var i=0; i<dragonImagesURL.length; i++){
-			var dragonImage = new Image();
-			dragonImage.src = dragonImagesURL[i]
-			dragonImages.push(dragonImage);
+		for (var i=0; i<dinoImagesURL.length; i++){
+			var dinoImage = new Image();
+			dinoImage.src = dinoImagesURL[i]
+			dinoImages.push(dinoImage);
 		}
 
-		var dragon = {};
-		dragon.images = dragonImages;
-		dragon.width = 50;
-		dragon.height = 50;
-		dragon.x = 100;
-		dragon.y = 280;
-		dragon.speedY = 0;
-		dragon.speedX = 0;
+		var dino = {};
+		dino.images = dinoImages;
+		dino.width = 50;
+		dino.height = 50;
+		dino.x = 100;
+		dino.y = 20;
+		dino.speedY = 0;
+		dino.speedX = 0;
 
 		var gravity = 3.5;
 
-		dragon.move = function(){
+		dino.move = function(){
 			this.speedY = this.speedY + gravity;
 			this.y += this.speedY;
+			// if (this.y < 280 && this.x == obstacle.x){
+			// 	console.log("Over")
+			// }
 			if (this.y > 280){
 				this.y = 280;
 				this.speedY = 0;
@@ -94,29 +98,38 @@
 			return cloud;
 		}
 
-		var hurdles = [];
-		var hurdleImage = new Image();
-		hurdleImage.src = "https://i.imgur.com/9pEv72P.png";
+		var obstacles = [];
+		var obstacleImage = new Image();
+		obstacleImage.src = "https://i.imgur.com/9pEv72P.png";
 
 		var score = 0;
-		function getHurdle(){
-			var hurdle = {};
-			hurdle.images = [hurdleImage];
-			hurdle.width = 30;
-			hurdle.height = 50;
-			hurdle.x = width;
-			hurdle.y = height - hurdle.height/2 - 10;
-			hurdle.isActive = true;
-			hurdle.speedX = -15;
-			hurdle.speedY = 0;
+		function getobstacle(){
+			var obstacle = {};
+			obstacle.images = [obstacleImage];
+			obstacle.width = 30;
+			obstacle.height = 60;
+			obstacle.x = width;
+			obstacle.y = height - obstacle.height/2 - 10;
+			obstacle.isActive = true;
+			obstacle.speedX = -15;
+			obstacle.speedY = 0;
 
-			hurdle.move = function(){
+			obstacle.move = function(){
 				this.x = this.x + this.speedX;
+				if (this.x == 100 && dino.y >= 220){
+					console.log("Over");
+					ctx.font = "50px 'Press Start 2P'";
+					ctx.textAlign = "center";
+					ctx.textBaseline = "middle";
+					ctx.fillStyle = "White";
+					ctx.fillText("GAME OVER",canvas.width/2,canvas.height/2);
+					gameOver = true;
+				}
 				if (this.x < -100){
 					this.isActive = false;
 				}
 			}
-			return hurdle;
+			return obstacle;
 		}
 
 		var landImage = new Image();
@@ -141,71 +154,80 @@
 
 		var counter = 0;
 		function update(){
-			counter++;
-			score++;
-			ctx.fillStyle = "#f7f7f7";
-			ctx.fillRect(0, 0, width, height);
+			if (!gameOver){
+				counter++;
+				score++;
+				ctx.fillStyle = "#121212";
+				ctx.fillRect(0, 0, width, height);
 
-			if (counter%40 == 0){
-				var cloud = getCloud();
-				clouds.push(cloud);
-			}
-
-			if(counter%100==0){	
-				var hurdle = getHurdle();	
-				hurdles.push(hurdle);	
-			}
-
-			ctx.font = "12px 'Press Start 2P'"
-			ctx.fillStyle = "#000000"
-			ctx.fillText("Score: " + parseInt(score/2), width-180, 50)
-
-			dragon.move();
-			drawObject(dragon);
-
-			var cloudsFinal = [];
-			for (var i=0; i<clouds.length; i++){
-				var cloud = clouds[i];
-				cloud.move();
-				drawObject(cloud);
-
-				if (cloud.isActive == true){
-					cloudsFinal.push(cloud);
+				if (counter%40 == 0){
+					var cloud = getCloud();
+					clouds.push(cloud);
 				}
-			}
 
-			clouds = cloudsFinal;
-
-			var hurdlesFinal = [];
-			for (var i=0; i<hurdles.length; i++){
-				var hurdle = hurdles[i];
-				hurdle.move();
-				drawObject(hurdle);
-
-				if (hurdle.isActive == true){
-					hurdlesFinal.push(hurdle);
+				if(counter%100==0){	
+					var obstacle = getobstacle();	
+					obstacles.push(obstacle);	
 				}
+
+				ctx.font = "12px 'Press Start 2P'"
+				ctx.fillStyle = "#acacac"
+				ctx.fillText("Score: " + parseInt(score/2), width-180, 50)
+
+				dino.move();
+				drawObject(dino);
+
+				var cloudsFinal = [];
+				for (var i=0; i<clouds.length; i++){
+					var cloud = clouds[i];
+					cloud.move();
+					drawObject(cloud);
+
+					if (cloud.isActive == true){
+						cloudsFinal.push(cloud);
+					}
+				}
+
+				clouds = cloudsFinal;
+
+				var obstaclesFinal = [];
+				for (var i=0; i<obstacles.length; i++){
+					var obstacle = obstacles[i];
+					obstacle.move();
+					drawObject(obstacle);
+
+					if (obstacle.isActive == true){
+						obstaclesFinal.push(obstacle);
+					}
+				}
+				obstacles = obstaclesFinal;
+
+				land.move();
+				drawObject(land);				
 			}
-			hurdles = hurdlesFinal;
-
-			land.move();
-			drawObject(land);
-
 		}
 
 		document.addEventListener("keydown", function(event) {
 			if (event.keyCode == 32 || event.keyCode == 38) {
 				// console.log(event.keyCode);
 				console.log("Jump")
-				if (dragon.y >= 200){
+				if (dino.y >= 200){
 					playJumpAudio();
-					dragon.speedY = -25;
+					dino.speedY = -25;
 				}
 			}
 
 		});
 		
 		setInterval(update, 50)
+		// if (obstacle.x == dino.x){
+		// 	console.log("asma");
+	// 		ctx.font = "50px Tahoma";
+	// 		ctx.textAlign = "center";
+	// 		ctx.textBaseline = "middle";
+	// 		ctx.fillStyle = "White";
+	// 		ctx.fillText("GAME OVER",canvas.width/2,canvas.height/2);
+		// }
 
 	</script>
 </body>
