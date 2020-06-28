@@ -20,6 +20,10 @@
 			var currentImageIndex = counter%object.images.length;
 			var currentImage = object.images[currentImageIndex];
 			ctx.drawImage(currentImage, object.x - (object.width/2), object.y - (object.height/2), object.width, object.height);
+
+			if (object.repeat === 1){
+				ctx.drawImage(currentImage, object.width + object.x - (object.width/2), object.y - (object.height/2), object.width, object.height);
+			}
 		}
 
 		var dragonImages = [];
@@ -45,6 +49,17 @@
 		dragon.speedY = 0;
 		dragon.speedX = 0;
 
+		var gravity = 2.08;
+
+		dragon.move = function(){
+			this.speedY = this.speedY + gravity;
+			this.y += this.speedY;
+			if (this.y > 280){
+				this.y = 280;
+				this.speedY = 0;
+			}
+		}
+
 		var clouds = [];
 		var cloudImage = new Image();
 		cloudImage.src = "https://i.imgur.com/H84RIEb.png";
@@ -52,8 +67,8 @@
 		function getCloud(){
 			var cloud = {};
 			cloud.images = [cloudImage];
-			cloud.width = 50;
-			cloud.height = 50;
+			cloud.width = 60;
+			cloud.height = 25;
 			cloud.x = width;
 			cloud.y = 30 + Math.random()*75;
 			cloud.isActive = true;
@@ -69,18 +84,70 @@
 			return cloud;
 		}
 
+		var hurdles = [];
+		var hurdleImage = new Image();
+		hurdleImage.src = "https://i.imgur.com/9pEv72P.png";
+
+		var score = 0;
+		function getHurdle(){
+			var hurdle = {};
+			hurdle.images = [hurdleImage];
+			hurdle.width = 30;
+			hurdle.height = 70;
+			hurdle.x = width;
+			hurdle.y = height - hurdle.height/2 - 15;
+			hurdle.isActive = true;
+			hurdle.speedX = -9;
+			hurdle.speedY = 0;
+
+			hurdle.move = function(){
+				this.x = this.x + this.speedX;
+				if (this.x < -100){
+					this.isActive = false;
+				}
+			}
+			return hurdle;
+		}
+
+		var landImage = new Image();
+		landImage.src = "land.png";
+		var land = {};
+		land.width = 1200;
+		land.height = 12;
+		land.images = [landImage];
+		land.x = land.width/2;
+		land.y = height - 13;
+		land.speedX = -4;
+		land.speedY = 0;
+		land.repeat = 1;
+
+		land.move = function(){
+			this.x = this.x + this.speedX;
+			if (this.x < -this.width/2){
+				this.x += this.width;
+			}
+		}
+
+
 		var counter = 0;
 		function update(){
 			counter++;
+			score++;
 			ctx.fillStyle = "#000000";
-			ctx.fillRect(0, 0, 700, 320);
-			
-			drawObject(dragon);
+			ctx.fillRect(0, 0, width, height);
 
 			if (counter%40 == 0){
 				var cloud = getCloud();
 				clouds.push(cloud);
 			}
+
+			if(counter%100==0){	
+				var hurdle = getHurdle();	
+				hurdles.push(hurdle);	
+			}
+
+			dragon.move();
+			drawObject(dragon);
 
 			var cloudsFinal = [];
 			for (var i=0; i<clouds.length; i++){
@@ -95,7 +162,33 @@
 
 			clouds = cloudsFinal;
 
+			var hurdlesFinal = [];
+			for (var i=0; i<hurdles.length; i++){
+				var hurdle = hurdles[i];
+				hurdle.move();
+				drawObject(hurdle);
+
+				if (hurdle.isActive == true){
+					hurdlesFinal.push(hurdle);
+				}
+			}
+			hurdles = hurdlesFinal;
+
+			land.move();
+			drawObject(land);
+
 		}
+
+		document.addEventListener("keydown", function(event) {
+			if (event.keyCode == 32 || event.keyCode == 38) {
+				// console.log(event.keyCode);
+				console.log("Jump")
+				if (dragon.y == 280){
+					dragon.speedY = -20;
+				}
+			}
+
+		});
 		
 		setInterval(update, 50)
 
