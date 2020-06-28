@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>T Rex</title>
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+		h4 {
+			color: #ffffff;
+		}
 	</style>
 </head>
 
@@ -11,6 +14,9 @@
 	<canvas width="1900" height="320" style="margin-top: 30px; display: block; margin: auto;" id="mycanv">
 		
 	</canvas>
+	<br><br><br><br>
+	<div style="text-align: center;"><h4><a href="https://www.github.com/pranjalagg">Github <br><br></a>Pranjal Aggarwal<a href="https://in.linkedin.com/in/pranjal-aggarwal"><br><br>Linkedin</a></h4></div>
+
 
 	<script type="text/javascript">
 		
@@ -20,10 +26,20 @@
 		var height = 320;
 		var gameOver = false;
 
-		var audio = new Audio("button-press.mp3")
+		var jumpSound = new Audio("smb_jump-small.wav");
+		var gameOverSound = new Audio("smb_mariodie.wav");
+		var checkpointSound = new Audio("smb_pipe.wav");
 
-		function playJumpAudio(){
-			audio.play();
+		function playJumpSound(){
+			jumpSound.play();
+		}
+
+		function playGameOverSound(){
+			gameOverSound.play();
+		}
+
+		function playChechpointSound(){
+			checkpointSound.play();
 		}
 
 		function drawObject(object){
@@ -38,11 +54,11 @@
 		}
 
 		var dinoImages = [];
-		var dinoImagesURL = [	"https://i.imgur.com/dyPMw7K.png",
-								"https://i.imgur.com/WwUcIUd.png",
-								"https://i.imgur.com/cO9ZZMC.png",
-								"https://i.imgur.com/AJUkc9s.png",
-								"https://i.imgur.com/6xIWhPr.png" ];
+		var dinoImagesURL = [	"1.png",
+								"2.png",
+								"3.png"];
+								// "4.png",
+								// "5.png" ];
 
 
 		for (var i=0; i<dinoImagesURL.length; i++){
@@ -73,7 +89,7 @@
 
 		var clouds = [];
 		var cloudImage = new Image();
-		cloudImage.src = "https://i.imgur.com/H84RIEb.png";
+		cloudImage.src = "cloud.png";
 
 		function getCloud(){
 			var cloud = {};
@@ -97,7 +113,7 @@
 
 		var obstacles = [];
 		var obstacleImage = new Image();
-		obstacleImage.src = "https://i.imgur.com/9pEv72P.png";
+		obstacleImage.src = "obstacle.png";
 
 		var score = 0;
 		function getobstacle(){
@@ -121,6 +137,7 @@
 					ctx.fillStyle = "White";
 					ctx.fillText("GAME OVER",canvas.width/2,canvas.height/2);
 					gameOver = true;
+					playGameOverSound();
 				}
 				if (this.x < -100){
 					this.isActive = false;
@@ -150,10 +167,16 @@
 
 
 		var counter = 0;
+		var checkpoint = 0;
 		function update(){
 			if (!gameOver){
 				counter++;
 				score++;
+				checkpoint++;
+				if (checkpoint/2 == 100){
+					playChechpointSound();
+					checkpoint = 0;
+				}
 				ctx.fillStyle = "#121212";
 				ctx.fillRect(0, 0, width, height);
 
@@ -162,7 +185,8 @@
 					clouds.push(cloud);
 				}
 
-				if(counter%100==0){	
+				// num = Math.random()*100;
+				if(counter%100 == 0){	
 					var obstacle = getobstacle();	
 					obstacles.push(obstacle);	
 				}
@@ -209,7 +233,7 @@
 				// console.log(event.keyCode);
 				console.log("Jump")
 				if (dino.y >= 200){
-					playJumpAudio();
+					playJumpSound();
 					dino.speedY = -25;
 				}
 			}
@@ -221,14 +245,6 @@
 		function callUpdate(){
 			setInterval(update, 50)
 		}
-		// if (obstacle.x == dino.x){
-		// 	console.log("asma");
-	// 		ctx.font = "50px Tahoma";
-	// 		ctx.textAlign = "center";
-	// 		ctx.textBaseline = "middle";
-	// 		ctx.fillStyle = "White";
-	// 		ctx.fillText("GAME OVER",canvas.width/2,canvas.height/2);
-		// }
 
 	</script>
 </body>
