@@ -165,9 +165,9 @@ var canvas = document.getElementById("mycanv");
 
 				num = Math.floor(Math.random()*21) + 50;
 				console.log(num);
-				if(counter%num == 0){	
-					var obstacle = getobstacle();	
-					obstacles.push(obstacle);	
+				if(counter%num == 0){
+					var obstacle = getobstacle();
+					obstacles.push(obstacle);
 				}
 
 				ctx.font = "12px 'Press Start 2P'"
@@ -203,7 +203,7 @@ var canvas = document.getElementById("mycanv");
 				obstacles = obstaclesFinal;
 
 				land.move();
-				drawObject(land);				
+				drawObject(land);
 			}
 		}
 
@@ -218,6 +218,14 @@ var canvas = document.getElementById("mycanv");
 			}
 
 		});
+		document.addEventListener("touchstart", function(event) {
+				console.log("Jump")
+				if (dino.y >= 200){
+					playJumpSound();
+					dino.speedY = -25;
+				}
+
+		}, false);
 
 		callUpdate();
 
