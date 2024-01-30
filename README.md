@@ -1,5 +1,4 @@
 # dino-T-Rex-game
-Game
- This is my version of the Chrome Dino T-Rex game which displays on the error page.
+ This is my version of the Chrome Dino T-Rex game, which is displayed on the error page.
  The game is built on JavaScript.
- For best experience, view on a full sized browser.
+ For the best experience, view it on a full-sized browser.
